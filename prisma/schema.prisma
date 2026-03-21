@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  wallets      Wallet[]
+  transactions Transaction[]
+  goals        Goal[]
+  budgets      Budget[]
+  installments Installment[]
+  recurrences  Recurrence[]
+  subscription Subscription?
+
+  @@map("users")
+}
+
+model Subscription {
+  id               String   @id @default(uuid())
+  plan             String   @default("free")
+  status           String   @default("active")
+  startDate        DateTime @default(now())
+  endDate          DateTime?
+  paymentMethod    String?
+  transactionId    String?
+  userId           String   @unique
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("subscriptions")
+}
+
+model Wallet {
+  id            String   @id @default(uuid())
+  name          String
+  type          String
+  balance       Float    @default(0)
+  value_initial Float    @default(0)
+  color         String
+  icon          String?
+  userId        String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions  Transaction[]
+  transactionsTo Transaction[] @relation("WalletTo")
+
+  @@index([userId])
+  @@map("wallets")
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  description String
+  category    String
+  value       Float
+  type        String
+  date        DateTime
+  paid        Boolean  @default(true)
+  color       String?
+  userId      String
+  walletId    String
+  walletToId  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wallet  Wallet  @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  walletTo Wallet? @relation("WalletTo", fields: [walletToId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([walletId])
+  @@index([userId, date])
+  @@map("transactions")
+}
+
+model Goal {
+  id        String   @id @default(uuid())
+  name      String
+  target    Float
+  current   Float    @default(0)
+  deadline  DateTime
+  color     String
+  icon      String
+  completed Boolean  @default(false)
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("goals")
+}
+
+model Budget {
+  id        String   @id @default(uuid())
+  category  String
+  limit     Float
+  spent     Float    @default(0)
+  color     String
+  icon      String
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("budgets")
+}
+
+model Installment {
+  id                    String   @id @default(uuid())
+  description           String
+  totalValue            Float
+  paidValue             Float    @default(0)
+  totalInstallments     Int
+  paidInstallments      Int      @default(0)
+  nextDueDate           DateTime
+  color                 String
+  category              String
+  completed             Boolean  @default(false)
+  userId                String
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("installments")
+}
+
+model Recurrence {
+  id          String   @id @default(uuid())
+  description String
+  value      Float
+  type       String
+  frequency  String
+  nextDate   DateTime
+  category   String
+  active     Boolean  @default(true)
+  color      String
+  userId     String
+  lastProcessed DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("recurrences")
+}

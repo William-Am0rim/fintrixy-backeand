@@ -1,0 +1,14 @@
+PrismaClientInitializationError: 
+Invalid `prisma.user.findFirst()` invocation in
+C:\Users\William\Desktop\Projetos\fintrixy_new\api\test-db2.js:7:36
+
+  4 
+  5 async function main() {
+  6   try {
+→ 7     const user = await prisma.user.findFirst(
+Timed out fetching a new connection from the connection pool. More info: http://pris.ly/d/connection-pool (Current connection pool timeout: 10, connection limit: 17)
+    at $n.handleRequestError (C:\Users\William\Desktop\Projetos\fintrixy_new\api\node_modules\@prisma\client\runtime\library.js:121:7615)
+    at $n.handleAndLogRequestError (C:\Users\William\Desktop\Projetos\fintrixy_new\api\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (C:\Users\William\Desktop\Projetos\fintrixy_new\api\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (C:\Users\William\Desktop\Projetos\fintrixy_new\api\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async main (C:\Users\William\Desktop\Projetos\fintrixy_new\api\test-db2.js:7:18)
