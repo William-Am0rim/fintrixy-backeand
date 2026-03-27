@@ -12,7 +12,21 @@ import { globalErrorHandler, notFound } from "./middlewares/error.middleware";
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+
+    if (
+      origin.includes("localhost") ||
+      origin.includes("vercel.app")
+    ) {
+      return callback(null, true);
+    }
+
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true
+}));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
