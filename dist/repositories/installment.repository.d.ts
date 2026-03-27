@@ -1,0 +1,163 @@
+export interface InstallmentStats {
+    total: number;
+    active: number;
+    completed: number;
+    totalRemaining: number;
+    totalPaid: number;
+    averageInstallment: number;
+}
+export declare class InstallmentRepository {
+    findAll(userId: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        color: string;
+        userId: string;
+        description: string;
+        category: string;
+        completed: boolean;
+        totalValue: number;
+        totalInstallments: number;
+        paidValue: number;
+        paidInstallments: number;
+        nextDueDate: Date;
+    }[]>;
+    findById(id: string, userId: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        color: string;
+        userId: string;
+        description: string;
+        category: string;
+        completed: boolean;
+        totalValue: number;
+        totalInstallments: number;
+        paidValue: number;
+        paidInstallments: number;
+        nextDueDate: Date;
+    } | null>;
+    findActive(userId: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        color: string;
+        userId: string;
+        description: string;
+        category: string;
+        completed: boolean;
+        totalValue: number;
+        totalInstallments: number;
+        paidValue: number;
+        paidInstallments: number;
+        nextDueDate: Date;
+    }[]>;
+    findCompleted(userId: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        color: string;
+        userId: string;
+        description: string;
+        category: string;
+        completed: boolean;
+        totalValue: number;
+        totalInstallments: number;
+        paidValue: number;
+        paidInstallments: number;
+        nextDueDate: Date;
+    }[]>;
+    create(data: any): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        color: string;
+        userId: string;
+        description: string;
+        category: string;
+        completed: boolean;
+        totalValue: number;
+        totalInstallments: number;
+        paidValue: number;
+        paidInstallments: number;
+        nextDueDate: Date;
+    }>;
+    update(id: string, data: any): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        color: string;
+        userId: string;
+        description: string;
+        category: string;
+        completed: boolean;
+        totalValue: number;
+        totalInstallments: number;
+        paidValue: number;
+        paidInstallments: number;
+        nextDueDate: Date;
+    }>;
+    delete(id: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        color: string;
+        userId: string;
+        description: string;
+        category: string;
+        completed: boolean;
+        totalValue: number;
+        totalInstallments: number;
+        paidValue: number;
+        paidInstallments: number;
+        nextDueDate: Date;
+    }>;
+    payInstallment(id: string, amount: number | null): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        color: string;
+        userId: string;
+        description: string;
+        category: string;
+        completed: boolean;
+        totalValue: number;
+        totalInstallments: number;
+        paidValue: number;
+        paidInstallments: number;
+        nextDueDate: Date;
+    }>;
+    getStats(userId: string): Promise<InstallmentStats>;
+    getUpcoming(userId: string, days?: number): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        color: string;
+        userId: string;
+        description: string;
+        category: string;
+        completed: boolean;
+        totalValue: number;
+        totalInstallments: number;
+        paidValue: number;
+        paidInstallments: number;
+        nextDueDate: Date;
+    }[]>;
+    getOverdue(userId: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        color: string;
+        userId: string;
+        description: string;
+        category: string;
+        completed: boolean;
+        totalValue: number;
+        totalInstallments: number;
+        paidValue: number;
+        paidInstallments: number;
+        nextDueDate: Date;
+    }[]>;
+}
+export declare const installmentRepository: InstallmentRepository;
+//# sourceMappingURL=installment.repository.d.ts.map

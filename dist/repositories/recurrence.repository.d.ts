@@ -1,0 +1,184 @@
+export interface RecurrenceStats {
+    total: number;
+    active: number;
+    inactive: number;
+    totalIncome: number;
+    totalExpense: number;
+    netBalance: number;
+    byFrequency: {
+        frequency: string;
+        count: number;
+        total: number;
+    }[];
+}
+export declare class RecurrenceRepository {
+    findAll(userId: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        value: number;
+        type: string;
+        color: string;
+        userId: string;
+        active: boolean;
+        description: string;
+        category: string;
+        frequency: string;
+        nextDate: Date;
+        lastProcessed: Date | null;
+    }[]>;
+    findById(id: string, userId: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        value: number;
+        type: string;
+        color: string;
+        userId: string;
+        active: boolean;
+        description: string;
+        category: string;
+        frequency: string;
+        nextDate: Date;
+        lastProcessed: Date | null;
+    } | null>;
+    findActive(userId: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        value: number;
+        type: string;
+        color: string;
+        userId: string;
+        active: boolean;
+        description: string;
+        category: string;
+        frequency: string;
+        nextDate: Date;
+        lastProcessed: Date | null;
+    }[]>;
+    findInactive(userId: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        value: number;
+        type: string;
+        color: string;
+        userId: string;
+        active: boolean;
+        description: string;
+        category: string;
+        frequency: string;
+        nextDate: Date;
+        lastProcessed: Date | null;
+    }[]>;
+    create(data: any): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        value: number;
+        type: string;
+        color: string;
+        userId: string;
+        active: boolean;
+        description: string;
+        category: string;
+        frequency: string;
+        nextDate: Date;
+        lastProcessed: Date | null;
+    }>;
+    update(id: string, data: any): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        value: number;
+        type: string;
+        color: string;
+        userId: string;
+        active: boolean;
+        description: string;
+        category: string;
+        frequency: string;
+        nextDate: Date;
+        lastProcessed: Date | null;
+    }>;
+    delete(id: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        value: number;
+        type: string;
+        color: string;
+        userId: string;
+        active: boolean;
+        description: string;
+        category: string;
+        frequency: string;
+        nextDate: Date;
+        lastProcessed: Date | null;
+    }>;
+    toggleActive(id: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        value: number;
+        type: string;
+        color: string;
+        userId: string;
+        active: boolean;
+        description: string;
+        category: string;
+        frequency: string;
+        nextDate: Date;
+        lastProcessed: Date | null;
+    }>;
+    processNow(id: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        value: number;
+        type: string;
+        color: string;
+        userId: string;
+        active: boolean;
+        description: string;
+        category: string;
+        frequency: string;
+        nextDate: Date;
+        lastProcessed: Date | null;
+    }>;
+    skipNext(id: string): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        value: number;
+        type: string;
+        color: string;
+        userId: string;
+        active: boolean;
+        description: string;
+        category: string;
+        frequency: string;
+        nextDate: Date;
+        lastProcessed: Date | null;
+    }>;
+    calculateNextDate(currentDate: Date, frequency: string): Date;
+    getStats(userId: string): Promise<RecurrenceStats>;
+    getUpcoming(userId: string, days?: number): Promise<{
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        value: number;
+        type: string;
+        color: string;
+        userId: string;
+        active: boolean;
+        description: string;
+        category: string;
+        frequency: string;
+        nextDate: Date;
+        lastProcessed: Date | null;
+    }[]>;
+}
+export declare const recurrenceRepository: RecurrenceRepository;
+//# sourceMappingURL=recurrence.repository.d.ts.map
