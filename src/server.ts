@@ -12,12 +12,15 @@ import { globalErrorHandler, notFound } from "./middlewares/error.middleware";
 const app = express();
 
 app.use(helmet());
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [
+  "http://localhost:3000",
+];
+
 app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "https://fintrixy-frontend-9rrf.vercel.app"
-  ],
-  credentials: true
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
 const limiter = rateLimit({
