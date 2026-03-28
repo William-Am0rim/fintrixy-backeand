@@ -12,7 +12,12 @@ import { globalErrorHandler, notFound } from "./middlewares/error.middleware";
 const app = express();
 
 app.use(helmet());
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",").map(origin => {
+  if (!origin.startsWith('http')) {
+    return `https://${origin}`;
+  }
+  return origin;
+}) || [
   "http://localhost:3000",
 ];
 
