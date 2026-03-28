@@ -11,44 +11,12 @@ import { globalErrorHandler, notFound } from "./middlewares/error.middleware";
 
 const app = express();
 
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  const allowedOrigins = [
-    "http://localhost:3000",
-    "https://fintrixy-frontend-9rrf.vercel.app",
-  ];
-  
-  if (origin && allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  } else {
-    res.setHeader("Access-Control-Allow-Origin", allowedOrigins[1]);
-  }
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
-
-app.options("*", (req, res) => {
-  const origin = req.headers.origin;
-  const allowedOrigins = [
-    "http://localhost:3000",
-    "https://fintrixy-frontend-9rrf.vercel.app",
-  ];
-  
-  if (origin && allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  } else {
-    res.setHeader("Access-Control-Allow-Origin", allowedOrigins[1]);
-  }
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.status(204).end();
-});
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(",") 
+  : ["http://localhost:3000", "https://fintrixy-frontend-9rrf.vercel.app"];
 
 app.use(cors({
-  origin: ["http://localhost:3000", "https://fintrixy-frontend-9rrf.vercel.app"],
+  origin: allowedOrigins,
   credentials: true,
 }));
 
