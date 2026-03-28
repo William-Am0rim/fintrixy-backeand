@@ -11,46 +11,26 @@ import { globalErrorHandler, notFound } from "./middlewares/error.middleware";
 
 const app = express();
 
+const corsOptions: cors.CorsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      "http://localhost:3000",
+      "https://fintrixy-frontend-9rrf.vercel.app",
+    ];
+    
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
 app.use(helmet());
-const allowedOriginsList = process.env.ALLOWED_ORIGINS?.split(",").map(origin => 
-  origin.trim()
-) || [];
-
-function normalizeOrigin(origin: string): string {
-  if (!origin) return origin;
-  if (!origin.startsWith('http')) {
-    return `https://${origin}`;
-  }
-  return origin;
-}
-
-function getAllowedOrigins(): string[] {
-  const defaults = ["http://localhost:3000"];
-  if (allowedOriginsList.length === 0) return defaults;
-  return [...allowedOriginsList.map(normalizeOrigin), ...defaults];
-}
-
-app.use((req, res, next) => {
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) {
-        callback(null, true);
-        return;
-      }
-      const normalizedOrigin = normalizeOrigin(origin);
-      const allowedOrigins = getAllowedOrigins();
-      
-      if (allowedOrigins.includes(normalizedOrigin) || allowedOrigins.includes('*')) {
-        callback(null, normalizedOrigin);
-      } else {
-        callback(new Error(`Origin ${origin} not allowed by CORS policy`));
-      }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })(req, res, next);
-});
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
