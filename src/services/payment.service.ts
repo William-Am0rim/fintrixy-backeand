@@ -1,7 +1,7 @@
 import { config } from "../config";
 import prisma from "../config/database";
 
-const ABACATEPAY_API_URL = "https://api.abacatepay.com/v2";
+const ABACATEPAY_API_URL = "https://api.abacatepay.com/v1";
 
 export interface PaymentResult {
   success: boolean;
@@ -21,26 +21,18 @@ export const paymentService = {
 
       console.log("Criando cobrança com API key:", config.abacatepay.apiKey ? `Presente - ${config.abacatepay.apiKey.substring(0, 10)}...` : "Ausente");
 
-      const response = await fetch(`${ABACATEPAY_API_URL}/checkouts/create`, {
+      const response = await fetch(`${ABACATEPAY_API_URL}/transparents/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${config.abacatepay.apiKey}`,
         },
         body: JSON.stringify({
-          items: [
-            {
-              id: `PLAN-${plan.toUpperCase()}`,
-              quantity: 1,
-            },
-          ],
-          methods: ["PIX"],
-          returnUrl: `${config.cors.frontendUrl}/plans?success=true`,
-          completionUrl: `${config.cors.frontendUrl}/plans?success=true`,
+          amount: Math.round(amount * 100),
+          method: "PIX_QRCODE",
           metadata: {
             userId,
             plan,
-            amount: Math.round(amount * 100),
           },
         }),
       });
@@ -61,7 +53,7 @@ export const paymentService = {
 
   async getPaymentStatus(paymentId: string): Promise<PaymentResult> {
     try {
-      const response = await fetch(`${ABACATEPAY_API_URL}/checkouts/${paymentId}`, {
+      const response = await fetch(`${ABACATEPAY_API_URL}/transparents/${paymentId}`, {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${config.abacatepay.apiKey}`,

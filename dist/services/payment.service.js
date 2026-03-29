@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.paymentService = void 0;
 const config_1 = require("../config");
 const database_1 = __importDefault(require("../config/database"));
-const ABACATEPAY_API_URL = "https://api.abacatepay.com/v2";
+const ABACATEPAY_API_URL = "https://api.abacatepay.com/v1";
 exports.paymentService = {
     async createPixCharge(amount, userId, plan) {
         try {
@@ -14,27 +14,19 @@ exports.paymentService = {
             if (!user) {
                 return { success: false, error: "Usuário não encontrado" };
             }
-            console.log("Criando cobrança com API key:", config_1.config.abacatepay.apiKey ? "Presente" : "Ausente");
-            const response = await fetch(`${ABACATEPAY_API_URL}/checkouts/create`, {
+            console.log("Criando cobrança com API key:", config_1.config.abacatepay.apiKey ? `Presente - ${config_1.config.abacatepay.apiKey.substring(0, 10)}...` : "Ausente");
+            const response = await fetch(`${ABACATEPAY_API_URL}/transparents/create`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${config_1.config.abacatepay.apiKey}`,
                 },
                 body: JSON.stringify({
-                    items: [
-                        {
-                            id: `PLAN-${plan.toUpperCase()}`,
-                            quantity: 1,
-                        },
-                    ],
-                    methods: ["PIX"],
-                    returnUrl: `${config_1.config.cors.frontendUrl}/plans?success=true`,
-                    completionUrl: `${config_1.config.cors.frontendUrl}/plans?success=true`,
+                    amount: Math.round(amount * 100),
+                    method: "PIX_QRCODE",
                     metadata: {
                         userId,
                         plan,
-                        amount: Math.round(amount * 100),
                     },
                 }),
             });
@@ -52,7 +44,7 @@ exports.paymentService = {
     },
     async getPaymentStatus(paymentId) {
         try {
-            const response = await fetch(`${ABACATEPAY_API_URL}/checkouts/${paymentId}`, {
+            const response = await fetch(`${ABACATEPAY_API_URL}/transparents/${paymentId}`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${config_1.config.abacatepay.apiKey}`,
