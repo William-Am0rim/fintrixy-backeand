@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.paymentService = void 0;
 const config_1 = require("../config");
 const database_1 = __importDefault(require("../config/database"));
-const ABACATEPAY_API_URL = "https://api.abacatepay.com/v2";
+const ABACATEPAY_API_URL = "https://api.abacatepay.com/v1";
 exports.paymentService = {
     async createPixCharge(amount, userId, plan) {
         try {
@@ -15,21 +15,16 @@ exports.paymentService = {
                 return { success: false, error: "Usuário não encontrado" };
             }
             console.log("Criando cobrança com API key:", config_1.config.abacatepay.apiKey ? `Presente - ${config_1.config.abacatepay.apiKey.substring(0, 10)}...` : "Ausente");
-            const response = await fetch(`${ABACATEPAY_API_URL}/transparents/create`, {
+            const response = await fetch(`${ABACATEPAY_API_URL}/pixQrCode/create`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${config_1.config.abacatepay.apiKey}`,
                 },
                 body: JSON.stringify({
-                    method: "PIX",
-                    data: {
-                        amount: Math.round(amount * 100),
-                        metadata: {
-                            userId,
-                            plan,
-                        },
-                    },
+                    amount: Math.round(amount * 100),
+                    description: `Plano ${plan} - Fintrixy`,
+                    expiresIn: 3600,
                 }),
             });
             const data = await response.json();
@@ -46,7 +41,7 @@ exports.paymentService = {
     },
     async getPaymentStatus(paymentId) {
         try {
-            const response = await fetch(`${ABACATEPAY_API_URL}/transparents/${paymentId}`, {
+            const response = await fetch(`${ABACATEPAY_API_URL}/pixQrCode/check/${paymentId}`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${config_1.config.abacatepay.apiKey}`,
