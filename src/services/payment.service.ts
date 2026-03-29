@@ -19,7 +19,7 @@ export const paymentService = {
         return { success: false, error: "Usuário não encontrado" };
       }
 
-      console.log("Criando cobrança com API key:", config.abacatepay.apiKey ? "Presente" : "Ausente");
+      console.log("Criando cobrança com API key:", config.abacatepay.apiKey ? `Presente - ${config.abacatepay.apiKey.substring(0, 10)}...` : "Ausente");
 
       const response = await fetch(`${ABACATEPAY_API_URL}/checkouts/create`, {
         method: "POST",
