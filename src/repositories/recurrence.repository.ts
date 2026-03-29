@@ -34,14 +34,21 @@ export class RecurrenceRepository {
   }
 
   async create(data: any) {
+    const { wallet_id, ...rest } = data;
     return prisma.recurrence.create({
-      data: { ...data, nextDate: new Date(data.nextDate) },
+      data: { 
+        ...rest, 
+        nextDate: new Date(data.nextDate),
+        walletId: wallet_id || null,
+      },
     });
   }
 
   async update(id: string, data: any) {
-    const updateData: any = { ...data };
+    const { wallet_id, ...rest } = data;
+    const updateData: any = { ...rest };
     if (data.nextDate) updateData.nextDate = new Date(data.nextDate);
+    if (wallet_id) updateData.walletId = wallet_id;
     return prisma.recurrence.update({ where: { id }, data: updateData });
   }
 
