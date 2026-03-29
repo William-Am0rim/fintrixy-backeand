@@ -7,6 +7,7 @@ import budgetRoutes from "./budget.routes";
 import installmentRoutes from "./installment.routes";
 import recurrenceRoutes from "./recurrence.routes";
 import subscriptionRoutes from "./subscription.routes";
+import paymentRoutes from "./payment.routes";
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use("/budgets", budgetRoutes);
 router.use("/installments", installmentRoutes);
 router.use("/recurrences", recurrenceRoutes);
 router.use("/subscription", subscriptionRoutes);
+router.use("/payment", paymentRoutes);
 
 export default router;

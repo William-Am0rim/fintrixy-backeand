@@ -12,6 +12,7 @@ const budget_routes_1 = __importDefault(require("./budget.routes"));
 const installment_routes_1 = __importDefault(require("./installment.routes"));
 const recurrence_routes_1 = __importDefault(require("./recurrence.routes"));
 const subscription_routes_1 = __importDefault(require("./subscription.routes"));
+const payment_routes_1 = __importDefault(require("./payment.routes"));
 const router = (0, express_1.Router)();
 router.use("/auth", auth_routes_1.default);
 router.use("/wallets", wallet_routes_1.default);
@@ -21,5 +22,6 @@ router.use("/budgets", budget_routes_1.default);
 router.use("/installments", installment_routes_1.default);
 router.use("/recurrences", recurrence_routes_1.default);
 router.use("/subscription", subscription_routes_1.default);
+router.use("/payment", payment_routes_1.default);
 exports.default = router;
 //# sourceMappingURL=index.js.map

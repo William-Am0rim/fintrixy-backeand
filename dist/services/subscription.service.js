@@ -1,8 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.subscriptionService = exports.SubscriptionService = exports.PLAN_LIMITS = void 0;
+exports.subscriptionService = exports.SubscriptionService = exports.PLAN_LIMITS = exports.PLAN_PRICES = void 0;
 const subscription_repository_1 = require("../repositories/subscription.repository");
+const payment_service_1 = require("./payment.service");
 const error_middleware_1 = require("../middlewares/error.middleware");
+exports.PLAN_PRICES = {
+    pro: 10,
+};
 exports.PLAN_LIMITS = {
     free: {
         wallets: 1,
@@ -71,14 +75,32 @@ class SubscriptionService {
         if (subscription.plan === "pro") {
             throw new error_middleware_1.AppError("Você já possui o plano Pro", 400);
         }
-        return subscription_repository_1.subscriptionRepository.upsert(userId, {
-            plan: "pro",
-            status: "active",
-            paymentMethod: paymentData?.paymentMethod || "pix",
-            transactionId: paymentData?.transactionId || `PRO-${Date.now()}`,
-            startDate: new Date(),
-            endDate: null,
-        });
+        const result = await payment_service_1.paymentService.createPixCharge(exports.PLAN_PRICES.pro, userId, "pro");
+        if (!result.success) {
+            throw new error_middleware_1.AppError(result.error || "Erro ao criar pagamento", 400);
+        }
+        return {
+            paymentUrl: result.data.url,
+            billingId: result.data.id,
+        };
+    }
+    async confirmPayment(userId, billingId) {
+        const result = await payment_service_1.paymentService.getPaymentStatus(billingId);
+        if (!result.success) {
+            throw new error_middleware_1.AppError(result.error || "Erro ao verificar pagamento", 400);
+        }
+        const billing = result.data;
+        if (billing.status === "PAID" || billing.status === "COMPLETED") {
+            return subscription_repository_1.subscriptionRepository.upsert(userId, {
+                plan: "pro",
+                status: "active",
+                paymentMethod: "pix",
+                transactionId: billingId,
+                startDate: new Date(),
+                endDate: null,
+            });
+        }
+        throw new error_middleware_1.AppError("Pagamento ainda não foi confirmado", 400);
     }
     async downgradeToFree(userId) {
         return subscription_repository_1.subscriptionRepository.upsert(userId, {

@@ -15,4 +15,8 @@ export const config = {
   database: {
     url: process.env.DATABASE_URL || "",
   },
+  abacatepay: {
+    apiKey: process.env.ABACATEPAY_API_KEY || "",
+    sandbox: process.env.NODE_ENV !== "production",
+  },
 };

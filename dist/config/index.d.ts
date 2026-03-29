@@ -11,5 +11,9 @@ export declare const config: {
     database: {
         url: string;
     };
+    abacatepay: {
+        apiKey: string;
+        sandbox: boolean;
+    };
 };
 //# sourceMappingURL=index.d.ts.map

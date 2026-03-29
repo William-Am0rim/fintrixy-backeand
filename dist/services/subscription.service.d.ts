@@ -1,3 +1,6 @@
+export declare const PLAN_PRICES: {
+    pro: number;
+};
 export declare const PLAN_LIMITS: {
     free: {
         wallets: number;
@@ -67,6 +70,10 @@ export declare class SubscriptionService {
         type?: undefined;
     }>;
     upgradeToPro(userId: string, paymentData?: any): Promise<{
+        paymentUrl: any;
+        billingId: any;
+    }>;
+    confirmPayment(userId: string, billingId: string): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;

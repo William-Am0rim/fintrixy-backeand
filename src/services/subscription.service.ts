@@ -1,5 +1,10 @@
 import { subscriptionRepository } from "../repositories/subscription.repository";
+import { paymentService } from "./payment.service";
 import { AppError } from "../middlewares/error.middleware";
+
+export const PLAN_PRICES = {
+  pro: 10,
+};
 
 export const PLAN_LIMITS = {
   free: {
@@ -82,15 +87,40 @@ export class SubscriptionService {
     if (subscription.plan === "pro") {
       throw new AppError("Você já possui o plano Pro", 400);
     }
+
+    const result = await paymentService.createPixCharge(PLAN_PRICES.pro, userId, "pro");
     
-    return subscriptionRepository.upsert(userId, {
-      plan: "pro",
-      status: "active",
-      paymentMethod: paymentData?.paymentMethod || "pix",
-      transactionId: paymentData?.transactionId || `PRO-${Date.now()}`,
-      startDate: new Date(),
-      endDate: null,
-    });
+    if (!result.success) {
+      throw new AppError(result.error || "Erro ao criar pagamento", 400);
+    }
+
+    return {
+      paymentUrl: result.data.url,
+      billingId: result.data.id,
+    };
+  }
+
+  async confirmPayment(userId: string, billingId: string) {
+    const result = await paymentService.getPaymentStatus(billingId);
+    
+    if (!result.success) {
+      throw new AppError(result.error || "Erro ao verificar pagamento", 400);
+    }
+
+    const billing = result.data;
+    
+    if (billing.status === "PAID" || billing.status === "COMPLETED") {
+      return subscriptionRepository.upsert(userId, {
+        plan: "pro",
+        status: "active",
+        paymentMethod: "pix",
+        transactionId: billingId,
+        startDate: new Date(),
+        endDate: null,
+      });
+    }
+
+    throw new AppError("Pagamento ainda não foi confirmado", 400);
   }
 
   async downgradeToFree(userId: string) {

@@ -43,6 +43,7 @@ router.get("/limits", subscriptionController.getPlanLimits);
 router.get("/stats", subscriptionController.getStats);
 router.get("/check", subscriptionController.checkLimit);
 router.post("/upgrade", subscriptionController.upgradeToPro);
+router.post("/confirm-payment", subscriptionController.confirmPayment);
 router.post("/downgrade", subscriptionController.downgradeToFree);
 exports.default = router;
 //# sourceMappingURL=subscription.routes.js.map

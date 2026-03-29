@@ -46,3 +46,18 @@ export const checkLimit = catchAsync(async (req: any, res: Response) => {
   const result = await subscriptionService.checkLimit(userId, type as any);
   res.json({ success: true, data: result });
 });
+
+export const confirmPayment = catchAsync(async (req: any, res: Response) => {
+  const userId = req.user.id;
+  const { billingId } = req.body;
+  
+  if (!billingId) {
+    return res.status(400).json({ 
+      success: false, 
+      error: "billingId é obrigatório" 
+    });
+  }
+  
+  const subscription = await subscriptionService.confirmPayment(userId, billingId);
+  res.json({ success: true, data: subscription });
+});
