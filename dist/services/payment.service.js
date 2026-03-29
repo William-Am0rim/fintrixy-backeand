@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.paymentService = void 0;
 const config_1 = require("../config");
 const database_1 = __importDefault(require("../config/database"));
-const ABACATEPAY_API_URL = "https://api.abacatepay.com/v1";
+const ABACATEPAY_API_URL = "https://api.abacatepay.com/v2";
 exports.paymentService = {
     async createPixCharge(amount, userId, plan) {
         try {
@@ -22,11 +22,13 @@ exports.paymentService = {
                     "Authorization": `Bearer ${config_1.config.abacatepay.apiKey}`,
                 },
                 body: JSON.stringify({
-                    amount: Math.round(amount * 100),
-                    method: "PIX_QRCODE",
-                    metadata: {
-                        userId,
-                        plan,
+                    method: "PIX",
+                    data: {
+                        amount: Math.round(amount * 100),
+                        metadata: {
+                            userId,
+                            plan,
+                        },
                     },
                 }),
             });

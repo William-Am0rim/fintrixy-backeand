@@ -1,7 +1,7 @@
 import { config } from "../config";
 import prisma from "../config/database";
 
-const ABACATEPAY_API_URL = "https://api.abacatepay.com/v1";
+const ABACATEPAY_API_URL = "https://api.abacatepay.com/v2";
 
 export interface PaymentResult {
   success: boolean;
@@ -28,11 +28,13 @@ export const paymentService = {
           "Authorization": `Bearer ${config.abacatepay.apiKey}`,
         },
         body: JSON.stringify({
-          amount: Math.round(amount * 100),
-          method: "PIX_QRCODE",
-          metadata: {
-            userId,
-            plan,
+          method: "PIX",
+          data: {
+            amount: Math.round(amount * 100),
+            metadata: {
+              userId,
+              plan,
+            },
           },
         }),
       });
