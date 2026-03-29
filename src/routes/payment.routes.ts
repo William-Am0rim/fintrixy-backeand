@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authenticate } from "../middlewares/auth.middleware";
 import { paymentService } from "../services/payment.service";
+import { parsePixCopyPaste, formatPixAmount } from "../utils/pix-parser";
 
 const router = Router();
 
@@ -53,6 +54,33 @@ router.post("/webhook", async (req: any, res: any) => {
   } catch (error: any) {
     console.error("Erro ao processar webhook:", error);
     res.status(500).json({ success: false, message: "Erro ao processar webhook" });
+  }
+});
+
+router.post("/parse", async (req: any, res: any) => {
+  try {
+    const { pixCode } = req.body;
+
+    if (!pixCode) {
+      return res.status(400).json({ success: false, message: "Código PIX não fornecido" });
+    }
+
+    const parsedData = parsePixCopyPaste(pixCode);
+
+    if (!parsedData) {
+      return res.status(400).json({ success: false, message: "Código PIX inválido" });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        ...parsedData,
+        formattedAmount: formatPixAmount(parsedData.amount),
+      },
+    });
+  } catch (error: any) {
+    console.error("Erro ao parsear código PIX:", error);
+    res.status(500).json({ success: false, message: "Erro ao processar código PIX" });
   }
 });
 
