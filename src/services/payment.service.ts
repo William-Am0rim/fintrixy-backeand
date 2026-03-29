@@ -1,7 +1,7 @@
 import { config } from "../config";
 import prisma from "../config/database";
 
-const ABACATEPAY_API_URL = "https://api.abacatepay.com/v1";
+const ABACATEPAY_API_URL = "https://api.abacatepay.com/v2";
 
 export interface PaymentResult {
   success: boolean;
@@ -19,25 +19,17 @@ export const paymentService = {
         return { success: false, error: "Usuário não encontrado" };
       }
 
-      const response = await fetch(`${ABACATEPAY_API_URL}/billings`, {
+      console.log("Criando cobrança com API key:", config.abacatepay.apiKey ? "Presente" : "Ausente");
+
+      const response = await fetch(`${ABACATEPAY_API_URL}/transparents/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${config.abacatepay.apiKey}`,
         },
         body: JSON.stringify({
-          frequency: "ONE_TIME",
-          methods: ["PIX"],
-          products: [
-            {
-              externalId: `PLAN-${plan.toUpperCase()}`,
-              name: `Plano ${plan} - Fintrixy`,
-              quantity: 1,
-              price: Math.round(amount * 100),
-            },
-          ],
-          returnUrl: `${config.cors.frontendUrl}/plans?success=true`,
-          completionUrl: `${config.cors.frontendUrl}/plans?success=true`,
+          amount: Math.round(amount * 100),
+          method: "PIX_QRCODE",
           customer: {
             name: user.name,
             email: user.email,
@@ -50,9 +42,10 @@ export const paymentService = {
       });
 
       const data = await response.json() as any;
+      console.log("Resposta da AbacatePay:", response.status, data);
 
       if (!response.ok) {
-        return { success: false, error: data.message || "Erro ao criar cobrança" };
+        return { success: false, error: data.message || data.error || "Erro ao criar cobrança" };
       }
 
       return { success: true, data };
@@ -62,9 +55,9 @@ export const paymentService = {
     }
   },
 
-  async getPaymentStatus(billingId: string): Promise<PaymentResult> {
+  async getPaymentStatus(paymentId: string): Promise<PaymentResult> {
     try {
-      const response = await fetch(`${ABACATEPAY_API_URL}/billings/${billingId}`, {
+      const response = await fetch(`${ABACATEPAY_API_URL}/transparents/${paymentId}`, {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${config.abacatepay.apiKey}`,

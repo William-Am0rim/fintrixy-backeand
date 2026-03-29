@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.paymentService = void 0;
 const config_1 = require("../config");
 const database_1 = __importDefault(require("../config/database"));
-const ABACATEPAY_API_URL = "https://api.abacatepay.com/v1";
+const ABACATEPAY_API_URL = "https://api.abacatepay.com/v2";
 exports.paymentService = {
     async createPixCharge(amount, userId, plan) {
         try {
@@ -14,25 +14,16 @@ exports.paymentService = {
             if (!user) {
                 return { success: false, error: "Usuário não encontrado" };
             }
-            const response = await fetch(`${ABACATEPAY_API_URL}/billings`, {
+            console.log("Criando cobrança com API key:", config_1.config.abacatepay.apiKey ? "Presente" : "Ausente");
+            const response = await fetch(`${ABACATEPAY_API_URL}/transparents/create`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${config_1.config.abacatepay.apiKey}`,
                 },
                 body: JSON.stringify({
-                    frequency: "ONE_TIME",
-                    methods: ["PIX"],
-                    products: [
-                        {
-                            externalId: `PLAN-${plan.toUpperCase()}`,
-                            name: `Plano ${plan} - Fintrixy`,
-                            quantity: 1,
-                            price: Math.round(amount * 100),
-                        },
-                    ],
-                    returnUrl: `${config_1.config.cors.frontendUrl}/plans?success=true`,
-                    completionUrl: `${config_1.config.cors.frontendUrl}/plans?success=true`,
+                    amount: Math.round(amount * 100),
+                    method: "PIX_QRCODE",
                     customer: {
                         name: user.name,
                         email: user.email,
@@ -44,8 +35,9 @@ exports.paymentService = {
                 }),
             });
             const data = await response.json();
+            console.log("Resposta da AbacatePay:", response.status, data);
             if (!response.ok) {
-                return { success: false, error: data.message || "Erro ao criar cobrança" };
+                return { success: false, error: data.message || data.error || "Erro ao criar cobrança" };
             }
             return { success: true, data };
         }
@@ -54,9 +46,9 @@ exports.paymentService = {
             return { success: false, error: error.message || "Erro ao criar cobrança" };
         }
     },
-    async getPaymentStatus(billingId) {
+    async getPaymentStatus(paymentId) {
         try {
-            const response = await fetch(`${ABACATEPAY_API_URL}/billings/${billingId}`, {
+            const response = await fetch(`${ABACATEPAY_API_URL}/transparents/${paymentId}`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${config_1.config.abacatepay.apiKey}`,
