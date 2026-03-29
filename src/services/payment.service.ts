@@ -21,22 +21,26 @@ export const paymentService = {
 
       console.log("Criando cobrança com API key:", config.abacatepay.apiKey ? "Presente" : "Ausente");
 
-      const response = await fetch(`${ABACATEPAY_API_URL}/transparents/create`, {
+      const response = await fetch(`${ABACATEPAY_API_URL}/checkouts/create`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${config.abacatepay.apiKey}`,
         },
         body: JSON.stringify({
-          amount: Math.round(amount * 100),
-          method: "PIX_QRCODE",
-          customer: {
-            name: user.name,
-            email: user.email,
-          },
+          items: [
+            {
+              id: `PLAN-${plan.toUpperCase()}`,
+              quantity: 1,
+            },
+          ],
+          methods: ["PIX"],
+          returnUrl: `${config.cors.frontendUrl}/plans?success=true`,
+          completionUrl: `${config.cors.frontendUrl}/plans?success=true`,
           metadata: {
             userId,
             plan,
+            amount: Math.round(amount * 100),
           },
         }),
       });
@@ -48,7 +52,7 @@ export const paymentService = {
         return { success: false, error: data.message || data.error || "Erro ao criar cobrança" };
       }
 
-      return { success: true, data };
+      return { success: true, data: data.data };
     } catch (error: any) {
       console.error("Erro ao criar cobrança PIX:", error);
       return { success: false, error: error.message || "Erro ao criar cobrança" };
@@ -57,7 +61,7 @@ export const paymentService = {
 
   async getPaymentStatus(paymentId: string): Promise<PaymentResult> {
     try {
-      const response = await fetch(`${ABACATEPAY_API_URL}/transparents/${paymentId}`, {
+      const response = await fetch(`${ABACATEPAY_API_URL}/checkouts/${paymentId}`, {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${config.abacatepay.apiKey}`,
@@ -70,7 +74,7 @@ export const paymentService = {
         return { success: false, error: data.message || "Erro ao verificar pagamento" };
       }
 
-      return { success: true, data };
+      return { success: true, data: data.data };
     } catch (error: any) {
       console.error("Erro ao verificar pagamento:", error);
       return { success: false, error: error.message || "Erro ao verificar pagamento" };

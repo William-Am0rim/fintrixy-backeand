@@ -15,22 +15,26 @@ exports.paymentService = {
                 return { success: false, error: "Usuário não encontrado" };
             }
             console.log("Criando cobrança com API key:", config_1.config.abacatepay.apiKey ? "Presente" : "Ausente");
-            const response = await fetch(`${ABACATEPAY_API_URL}/transparents/create`, {
+            const response = await fetch(`${ABACATEPAY_API_URL}/checkouts/create`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${config_1.config.abacatepay.apiKey}`,
                 },
                 body: JSON.stringify({
-                    amount: Math.round(amount * 100),
-                    method: "PIX_QRCODE",
-                    customer: {
-                        name: user.name,
-                        email: user.email,
-                    },
+                    items: [
+                        {
+                            id: `PLAN-${plan.toUpperCase()}`,
+                            quantity: 1,
+                        },
+                    ],
+                    methods: ["PIX"],
+                    returnUrl: `${config_1.config.cors.frontendUrl}/plans?success=true`,
+                    completionUrl: `${config_1.config.cors.frontendUrl}/plans?success=true`,
                     metadata: {
                         userId,
                         plan,
+                        amount: Math.round(amount * 100),
                     },
                 }),
             });
@@ -39,7 +43,7 @@ exports.paymentService = {
             if (!response.ok) {
                 return { success: false, error: data.message || data.error || "Erro ao criar cobrança" };
             }
-            return { success: true, data };
+            return { success: true, data: data.data };
         }
         catch (error) {
             console.error("Erro ao criar cobrança PIX:", error);
@@ -48,7 +52,7 @@ exports.paymentService = {
     },
     async getPaymentStatus(paymentId) {
         try {
-            const response = await fetch(`${ABACATEPAY_API_URL}/transparents/${paymentId}`, {
+            const response = await fetch(`${ABACATEPAY_API_URL}/checkouts/${paymentId}`, {
                 method: "GET",
                 headers: {
                     "Authorization": `Bearer ${config_1.config.abacatepay.apiKey}`,
@@ -58,7 +62,7 @@ exports.paymentService = {
             if (!response.ok) {
                 return { success: false, error: data.message || "Erro ao verificar pagamento" };
             }
-            return { success: true, data };
+            return { success: true, data: data.data };
         }
         catch (error) {
             console.error("Erro ao verificar pagamento:", error);
