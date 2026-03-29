@@ -23,6 +23,7 @@ export declare class RecurrenceRepository {
         active: boolean;
         description: string;
         category: string;
+        walletId: string | null;
         frequency: string;
         nextDate: Date;
         lastProcessed: Date | null;
@@ -38,6 +39,7 @@ export declare class RecurrenceRepository {
         active: boolean;
         description: string;
         category: string;
+        walletId: string | null;
         frequency: string;
         nextDate: Date;
         lastProcessed: Date | null;
@@ -53,6 +55,7 @@ export declare class RecurrenceRepository {
         active: boolean;
         description: string;
         category: string;
+        walletId: string | null;
         frequency: string;
         nextDate: Date;
         lastProcessed: Date | null;
@@ -68,6 +71,7 @@ export declare class RecurrenceRepository {
         active: boolean;
         description: string;
         category: string;
+        walletId: string | null;
         frequency: string;
         nextDate: Date;
         lastProcessed: Date | null;
@@ -83,6 +87,7 @@ export declare class RecurrenceRepository {
         active: boolean;
         description: string;
         category: string;
+        walletId: string | null;
         frequency: string;
         nextDate: Date;
         lastProcessed: Date | null;
@@ -98,6 +103,7 @@ export declare class RecurrenceRepository {
         active: boolean;
         description: string;
         category: string;
+        walletId: string | null;
         frequency: string;
         nextDate: Date;
         lastProcessed: Date | null;
@@ -113,6 +119,7 @@ export declare class RecurrenceRepository {
         active: boolean;
         description: string;
         category: string;
+        walletId: string | null;
         frequency: string;
         nextDate: Date;
         lastProcessed: Date | null;
@@ -128,6 +135,7 @@ export declare class RecurrenceRepository {
         active: boolean;
         description: string;
         category: string;
+        walletId: string | null;
         frequency: string;
         nextDate: Date;
         lastProcessed: Date | null;
@@ -143,6 +151,7 @@ export declare class RecurrenceRepository {
         active: boolean;
         description: string;
         category: string;
+        walletId: string | null;
         frequency: string;
         nextDate: Date;
         lastProcessed: Date | null;
@@ -158,6 +167,7 @@ export declare class RecurrenceRepository {
         active: boolean;
         description: string;
         category: string;
+        walletId: string | null;
         frequency: string;
         nextDate: Date;
         lastProcessed: Date | null;
@@ -175,6 +185,7 @@ export declare class RecurrenceRepository {
         active: boolean;
         description: string;
         category: string;
+        walletId: string | null;
         frequency: string;
         nextDate: Date;
         lastProcessed: Date | null;

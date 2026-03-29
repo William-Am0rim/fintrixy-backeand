@@ -25,14 +25,22 @@ class RecurrenceRepository {
         });
     }
     async create(data) {
+        const { wallet_id, ...rest } = data;
         return database_1.default.recurrence.create({
-            data: { ...data, nextDate: new Date(data.nextDate) },
+            data: {
+                ...rest,
+                nextDate: new Date(data.nextDate),
+                walletId: wallet_id || null,
+            },
         });
     }
     async update(id, data) {
-        const updateData = { ...data };
+        const { wallet_id, ...rest } = data;
+        const updateData = { ...rest };
         if (data.nextDate)
             updateData.nextDate = new Date(data.nextDate);
+        if (wallet_id)
+            updateData.walletId = wallet_id;
         return database_1.default.recurrence.update({ where: { id }, data: updateData });
     }
     async delete(id) {

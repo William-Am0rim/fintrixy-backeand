@@ -14,8 +14,16 @@ const swagger_1 = __importDefault(require("./config/swagger"));
 const routes_1 = __importDefault(require("./routes"));
 const error_middleware_1 = require("./middlewares/error.middleware");
 const app = (0, express_1.default)();
-app.use((0, helmet_1.default)());
-app.use((0, cors_1.default)({ origin: config_1.config.cors.frontendUrl, credentials: true }));
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(",")
+    : ["http://localhost:3000", "https://fintrixy-frontend-9rrf.vercel.app"];
+app.use((0, cors_1.default)({
+    origin: allowedOrigins,
+    credentials: true,
+}));
+app.use((0, helmet_1.default)({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+}));
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000,
     max: 100,
